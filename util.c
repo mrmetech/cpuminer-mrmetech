@@ -2493,6 +2493,9 @@ void print_hash_tests(void)
 	x16s_hash(&hash[0], &buf[0]);
 	printpfx("x16s", hash);
 
+	argon2m_hash(&hash[0], &buf[0]);
+	printpfx("argon2m", hash);
+
 	x17hash(&hash[0], &buf[0]);
 	printpfx("x17", hash);
 

@@ -97,6 +97,7 @@ enum algos {
 	ALGO_DROP,        /* Dropcoin */
 	ALGO_FRESH,       /* Fresh */
 	ALGO_GROESTL,     /* Groestl */
+	ALGO_ARGON2M,     /* Merge */
 	ALGO_JHA,
 	ALGO_LBRY,        /* Lbry Sha Ripemd */
 	ALGO_LUFFA,       /* Luffa (Joincoin, Doom) */
@@ -162,6 +163,7 @@ static const char *algo_names[] = {
 	"drop",
 	"fresh",
 	"groestl",
+	"argon2m",
 	"jha",
 	"lbry",
 	"luffa",
@@ -322,6 +324,7 @@ Options:\n\
                           drop         Dropcoin\n\
                           fresh        Fresh\n\
                           groestl      GroestlCoin\n\
+                          argon2m      Merge\n\
                           heavy        Heavy\n\
                           jha          JHA\n\
                           keccak       Keccak (Old and deprecated)\n\
@@ -662,9 +665,9 @@ static bool work_decode(const json_t *val, struct work *work)
 			char netinfo[64] = { 0 };
 			if (opt_showdiff && net_diff > 0.) {
 				if (net_diff != work->targetdiff)
-					sprintf(netinfo, ", diff %.3f, target %.1f", net_diff, work->targetdiff);
+					sprintf(netinfo, ", diff %.8f, target %.1f", net_diff, work->targetdiff);
 				else
-					sprintf(netinfo, ", diff %.3f", net_diff);
+					sprintf(netinfo, ", diff %.8f", net_diff);
 			}
 			applog(LOG_BLUE, "%s block %d%s",
 				algo_names[opt_algo], work->height, netinfo);
@@ -731,7 +734,7 @@ static bool get_mininginfo(CURL *curl, struct work *work)
 					if (!opt_quiet) {
 						char netinfo[64] = { 0 };
 						char srate[32] = { 0 };
-						sprintf(netinfo, "diff %.2f", net_diff);
+						sprintf(netinfo, "diff %.8f", net_diff);
 						if (net_hashrate) {
 							format_hashrate(net_hashrate, srate);
 							strcat(netinfo, ", net ");
@@ -1066,9 +1069,9 @@ static int share_result(int result, struct work *work, const char *reason)
 	}
 
 	if (opt_showdiff)
-		sprintf(suppl, "diff %.3f", sharediff);
+		sprintf(suppl, "diff %.8f", sharediff);
 	else // accepted percent
-		sprintf(suppl, "%.2f%%", 100. * accepted_count / (accepted_count + rejected_count));
+		sprintf(suppl, "%.8f%%", 100. * accepted_count / (accepted_count + rejected_count));
 
 	switch (opt_algo) {
 	case ALGO_AXIOM:
@@ -1076,13 +1079,13 @@ static int share_result(int result, struct work *work, const char *reason)
 	case ALGO_CRYPTONIGHT:
 	case ALGO_PLUCK:
 	case ALGO_SCRYPTJANE:
-		sprintf(s, hashrate >= 1e6 ? "%.0f" : "%.2f", hashrate);
+		sprintf(s, hashrate >= 1e6 ? "%.0f" : "%.8f", hashrate);
 		applog(LOG_NOTICE, "accepted: %lu/%lu (%s), %s H/s %s",
 			accepted_count, accepted_count + rejected_count,
 			suppl, s, flag);
 		break;
 	default:
-		sprintf(s, hashrate >= 1e6 ? "%.0f" : "%.2f", hashrate / 1000.0);
+		sprintf(s, hashrate >= 1e6 ? "%.0f" : "%.8f", hashrate / 1000.0);
 		applog(LOG_NOTICE, "accepted: %lu/%lu (%s), %s kH/s %s",
 			accepted_count, accepted_count + rejected_count,
 			suppl, s, flag);
@@ -1425,7 +1428,7 @@ start:
 
 	if (opt_protocol && rc) {
 		timeval_subtract(&diff, &tv_end, &tv_start);
-		applog(LOG_DEBUG, "got new work in %.2f ms",
+		applog(LOG_DEBUG, "got new work in %.8f ms",
 		       (1000.0 * diff.tv_sec) + (0.001 * diff.tv_usec));
 	}
 
@@ -1856,6 +1859,7 @@ static void stratum_gen_work(struct stratum_ctx *sctx, struct work *work)
 			case ALGO_XEVAN:
 			case ALGO_X16R:
 			case ALGO_X16S:
+			case ALGO_ARGON2M:
 			case ALGO_X20R:
 				work_set_target(work, sctx->job.diff / (256.0 * opt_diff_factor));
 				break;
@@ -2208,6 +2212,7 @@ static void *miner_thread(void *userdata)
 			case ALGO_X15:
 			case ALGO_X16R:
 			case ALGO_X16S:
+			case ALGO_ARGON2M:
 			case ALGO_X17:
 			case ALGO_X20R:
 			case ALGO_ZR5:
@@ -2415,6 +2420,9 @@ static void *miner_thread(void *userdata)
 		case ALGO_X16S:
 			rc = scanhash_x16s(thr_id, &work, max_nonce, &hashes_done);
 			break;
+			case ALGO_ARGON2M:
+				rc = scanhash_argon2m(thr_id, &work,  max_nonce, &hashes_done);
+				break;
 		case ALGO_X17:
 			rc = scanhash_x17(thr_id, &work, max_nonce, &hashes_done);
 			break;
@@ -2448,10 +2456,10 @@ static void *miner_thread(void *userdata)
 			case ALGO_CRYPTONIGHT:
 			case ALGO_PLUCK:
 			case ALGO_SCRYPTJANE:
-				applog(LOG_INFO, "CPU #%d: %.2f H/s", thr_id, thr_hashrates[thr_id]);
+				applog(LOG_INFO, "CPU #%d: %.8f H/s", thr_id, thr_hashrates[thr_id]);
 				break;
 			default:
-				sprintf(s, thr_hashrates[thr_id] >= 1e6 ? "%.0f" : "%.2f",
+				sprintf(s, thr_hashrates[thr_id] >= 1e6 ? "%.0f" : "%.8f",
 						thr_hashrates[thr_id] / 1e3);
 				applog(LOG_INFO, "CPU #%d: %s kH/s", thr_id, s);
 				break;
@@ -2468,11 +2476,11 @@ static void *miner_thread(void *userdata)
 				case ALGO_CRYPTONIGHT:
 				case ALGO_AXIOM:
 				case ALGO_SCRYPTJANE:
-					sprintf(s, "%.3f", hashrate);
+					sprintf(s, "%.8f", hashrate);
 					applog(LOG_NOTICE, "Total: %s H/s", s);
 					break;
 				default:
-					sprintf(s, hashrate >= 1e6 ? "%.0f" : "%.2f", hashrate / 1000);
+					sprintf(s, hashrate >= 1e6 ? "%.0f" : "%.8f", hashrate / 1000);
 					applog(LOG_NOTICE, "Total: %s kH/s", s);
 					break;
 				}
@@ -2607,10 +2615,10 @@ start:
 					if (!opt_quiet) {
 						char netinfo[64] = { 0 };
 						if (net_diff > 0.) {
-							sprintf(netinfo, ", diff %.3f", net_diff);
+							sprintf(netinfo, ", diff %.8f", net_diff);
 						}
 						if (opt_showdiff)
-							sprintf(&netinfo[strlen(netinfo)], ", target %.3f", g_work.targetdiff);
+							sprintf(&netinfo[strlen(netinfo)], ", target %.8f", g_work.targetdiff);
 						applog(LOG_BLUE, "%s detected new block%s", short_url, netinfo);
 					}
 					time(&g_work_time);
@@ -2763,7 +2771,7 @@ static void *stratum_thread(void *userdata)
 				if (!opt_quiet && last_bloc_height != stratum.bloc_height) {
 					last_bloc_height = stratum.bloc_height;
 					if (net_diff > 0.)
-						applog(LOG_BLUE, "%s block %d, diff %.3f", algo_names[opt_algo],
+						applog(LOG_BLUE, "%s block %d, diff %.8f", algo_names[opt_algo],
 							stratum.bloc_height, net_diff);
 					else
 						applog(LOG_BLUE, "%s %s block %d", short_url, algo_names[opt_algo],
@@ -3391,8 +3399,8 @@ static int thread_create(struct thr_info *thr, void* func)
 
 static void show_credits()
 {
-	printf("** " PACKAGE_NAME " " PACKAGE_VERSION " by tpruvot@github **\n");
-	printf("BTC donation address: 1FhDPLPpw18X4srecguG3MxJYe4a1JsZnd (tpruvot)\n\n");
+	printf("** " PACKAGE_NAME " " PACKAGE_VERSION " by mrmetech@github **\n");
+	printf("MERGE donation address: MAzkZG3uzHz6pHnQ5aXr9K9im5WzXqcrWJ (Mrmetech)\n\n");
 }
 
 void get_defconfig_path(char *out, size_t bufsize, char *argv0);
