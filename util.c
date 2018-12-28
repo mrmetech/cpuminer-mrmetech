@@ -2326,6 +2326,9 @@ void print_hash_tests(void)
 	memset(buf, 0, sizeof(buf));
 	//buf[0] = 1; buf[64] = 2; // for endian tests
 
+	argon2m_hash(&hash[0], &buf[0]);
+	printpfx("argon2m", hash);	
+	
 	allium_hash(&hash[0], &buf[0]);
 	printpfx("allium", hash);
 
@@ -2492,9 +2495,6 @@ void print_hash_tests(void)
 
 	x16s_hash(&hash[0], &buf[0]);
 	printpfx("x16s", hash);
-
-	argon2m_hash(&hash[0], &buf[0]);
-	printpfx("argon2m", hash);
 
 	x17hash(&hash[0], &buf[0]);
 	printpfx("x17", hash);

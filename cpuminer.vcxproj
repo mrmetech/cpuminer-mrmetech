@@ -202,6 +202,7 @@
     <ClCompile Include="util.c">
       <Optimization Condition="'$(Configuration)'=='Release'">Full</Optimization>
     </ClCompile>
+    <ClCompile Include="algo\argon2m.c" />	
     <ClCompile Include="algo\allium.c" />
     <ClCompile Include="algo\axiom.c" />
     <ClCompile Include="algo\bastion.c" />
@@ -265,6 +266,12 @@
     <ClCompile Include="yescrypt\yescrypt-best.c" />
     <ClCompile Include="yescrypt\yescrypt-common.c" />
     <ClCompile Include="yescrypt\sha256_Y.c" />
+    <ClCompile Include="argon2m/blake2/blake2b.c" />
+    <ClCompile Include="argon2m/argon2d/argon2.c" />
+    <ClCompile Include="argon2m/argon2d/core.c" />
+    <ClCompile Include="argon2m/argon2d/opt.c" />
+    <ClCompile Include="argon2m/argon2d/thread.c" />
+    <ClCompile Include="argon2m/argon2d/encoding.c" />	
     <ClCompile Include="sha3\aes_helper.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -369,6 +376,14 @@
     <ClInclude Include="yescrypt\sysendian.h" />
     <ClInclude Include="yescrypt\yescrypt-platform.h" />
     <ClInclude Include="yescrypt\yescrypt.h" />
+    <ClInclude Include="argon2m/blake2/blake2.h" />
+    <ClInclude Include="argon2m/blake2/blake2-impl.h" />
+    <ClInclude Include="argon2m/blake2/blamka-round-opt.h" />
+    <ClInclude Include="argon2m/blake2/blamka-round-ref.h" />
+    <ClInclude Include="argon2m/argon2d/argon2.h" />
+    <ClInclude Include="argon2m/argon2d/core.h" />
+    <ClInclude Include="argon2m/argon2d/encoding.h" />
+    <ClInclude Include="argon2m/argon2d/thread.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="asm\neoscrypt_asm.S">

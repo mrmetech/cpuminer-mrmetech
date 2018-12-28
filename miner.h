@@ -150,6 +150,26 @@ static inline void le32enc(void *pp, uint32_t x)
 }
 #endif
 
+// This is a poorman's SIMD instruction, use 64 bit instruction to encode 2
+// uint32_t. This function flips endian on two adjacent 32 bit quantities
+// aligned to 64 bits. If source is LE output is BE, and vice versa.
+static inline void swab32_x2( uint64_t* dst, uint64_t src )
+{
+   *dst =   ( ( src & 0xff000000ff000000 ) >> 24 )
+          | ( ( src & 0x00ff000000ff0000 ) >>  8 )
+          | ( ( src & 0x0000ff000000ff00 ) <<  8 )
+          | ( ( src & 0x000000ff000000ff ) << 24 );
+}
+
+static inline void swab32_array( uint32_t* dst_p, uint32_t* src_p, int n )
+{
+   // Assumes source is LE
+   for ( int i=0; i < n/2; i++ )
+      swab32_x2( &((uint64_t*)dst_p)[i], ((uint64_t*)src_p)[i] );
+//   if ( n % 2 )
+//      be32enc( &dst_p[ n-1 ], src_p[ n-1 ] );
+}
+
 #if !HAVE_DECL_LE16DEC
 static inline uint16_t le16dec(const void *pp)
 {
@@ -198,6 +218,7 @@ void sha256_transform_8way(uint32_t *state, const uint32_t *block, int swap);
 
 struct work;
 
+int scanhash_argon2m(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done);
 int scanhash_allium(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done);
 int scanhash_axiom(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done);
 int scanhash_bastion(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done);
@@ -255,7 +276,6 @@ int scanhash_x14(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *ha
 int scanhash_x15(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done);
 int scanhash_x16r(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done);
 int scanhash_x16s(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done);
-int scanhash_argon2m(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done);
 int scanhash_x17(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done);
 int scanhash_x20r(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done);
 int scanhash_xevan(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done);
@@ -498,6 +518,7 @@ void format_hashrate(double hashrate, char *output);
 void print_hash_tests(void);
 
 void sha256d(unsigned char *hash, const unsigned char *data, int len);
+void argon2m_hash(void *output, const void *input);
 void allium_hash(void *state, const void *input);
 void axiomhash(void *state, const void *input);
 void bastionhash(void *output, const void *input);
@@ -551,7 +572,6 @@ void x14hash(void *output, const void *input);
 void x15hash(void *output, const void *input);
 void x16r_hash(void *output, const void *input);
 void x16s_hash(void *output, const void *input);
-void argon2m_hash(void *output, const void *input);
 void x17hash(void *output, const void *input);
 void x20r_hash(void *output, const void *input);
 void zr5hash(void *output, const void *input);

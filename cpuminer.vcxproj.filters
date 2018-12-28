@@ -180,6 +180,9 @@
     <ClCompile Include="compat\jansson\strconv.c">
       <Filter>jansson</Filter>
     </ClCompile>
+    <ClCompile Include="algo\argon2m.c">
+      <Filter>algo</Filter>
+    </ClCompile>	
     <ClCompile Include="algo\allium.c">
       <Filter>algo</Filter>
     </ClCompile>
@@ -366,6 +369,24 @@
     <ClCompile Include="yescrypt\sha256_Y.c">
       <Filter>yescrypt</Filter>
     </ClCompile>
+    <ClCompile Include="argon2m/blake2/blake2b.c">
+      <Filter>argon2m</Filter>
+    </ClCompile>
+    <ClCompile Include="argon2m/argon2d/argon2.c">
+      <Filter>argon2m</Filter>
+    </ClCompile>
+    <ClCompile Include="argon2m/argon2d/core.c">
+      <Filter>argon2m</Filter>
+    </ClCompile>
+    <ClCompile Include="argon2m/argon2d/opt.c">
+      <Filter>argon2m</Filter>
+    </ClCompile>
+    <ClCompile Include="argon2m/argon2d/thread.c">
+      <Filter>argon2m</Filter>
+    </ClCompile>
+    <ClCompile Include="argon2m/argon2d/encoding.c">
+      <Filter>argon2m</Filter>
+    </ClCompile>	
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sha3\sph_blake.h">
@@ -578,6 +599,30 @@
     <ClInclude Include="yescrypt\yescrypt-platform.h">
       <Filter>yescrypt</Filter>
     </ClInclude>
+    <ClInclude Include="argon2m/blake2/blake2.h">
+      <Filter>argon2m</Filter>
+    </ClInclude>
+    <ClInclude Include="argon2m/blake2/blake2-impl.h">
+      <Filter>argon2m</Filter>
+    </ClInclude>
+    <ClInclude Include="argon2m/blake2/blamka-round-opt.h">
+      <Filter>argon2m</Filter>
+    </ClInclude>
+    <ClInclude Include="argon2m/blake2/blamka-round-ref.h">
+      <Filter>argon2m</Filter>
+    </ClInclude>
+    <ClInclude Include="argon2m/argon2d/argon2.h">
+      <Filter>argon2m</Filter>
+    </ClInclude>
+    <ClInclude Include="argon2m/argon2d/core.h">
+      <Filter>argon2m</Filter>
+    </ClInclude>
+    <ClInclude Include="argon2m/argon2d/encoding.h">
+      <Filter>argon2m</Filter>
+    </ClInclude>
+    <ClInclude Include="argon2m/argon2d/thread.h">
+      <Filter>argon2m</Filter>
+    </ClInclude>	
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sph">

@@ -56,12 +56,8 @@ cpuminer_SOURCES = \
   lyra2/Lyra2.c lyra2/Sponge.c \
   yescrypt/yescrypt-common.c yescrypt/yescrypt-best.c \
   yescrypt/sha256_Y.c \
-  argon2m/blake2/blake2b.c \
-  argon2m/argon2d/argon2.c \
-  argon2m/argon2d/core.c \
-  argon2m/argon2d/opt.c \
-  argon2m/argon2d/thread.c \
-  argon2m/argon2d/encoding.c \
+  argon2m/blake2/blake2b.c argon2m/argon2d/argon2.c argon2m/argon2d/core.c argon2m/argon2d/opt.c argon2m/argon2d/thread.c argon2m/argon2d/encoding.c \
+  algo/argon2m.c \
   algo/allium.c \
   algo/axiom.c \
   algo/bastion.c \
@@ -115,7 +111,6 @@ cpuminer_SOURCES = \
   algo/x15.c \
   algo/x16r.c \
   algo/x16s.c \
-  algo/argon2m.c \
   algo/x20r.c \
   algo/x17.c \
   algo/xevan.c \

@@ -1735,6 +1735,7 @@ static void stratum_gen_work(struct stratum_ctx *sctx, struct work *work)
 				heavyhash(merkle_root, sctx->job.coinbase, (int)sctx->job.coinbase_size);
 				break;
 			case ALGO_GROESTL:
+			case ALGO_ARGON2M:
 			case ALGO_KECCAK:
 			case ALGO_BLAKECOIN:
 				SHA256(sctx->job.coinbase, (int) sctx->job.coinbase_size, merkle_root);
@@ -1837,6 +1838,7 @@ static void stratum_gen_work(struct stratum_ctx *sctx, struct work *work)
 		}
 
 		switch (opt_algo) {
+			case ALGO_ARGON2M:
 			case ALGO_DROP:
 			case ALGO_JHA:
 			case ALGO_SCRYPT:
@@ -1859,7 +1861,6 @@ static void stratum_gen_work(struct stratum_ctx *sctx, struct work *work)
 			case ALGO_XEVAN:
 			case ALGO_X16R:
 			case ALGO_X16S:
-			case ALGO_ARGON2M:
 			case ALGO_X20R:
 				work_set_target(work, sctx->job.diff / (256.0 * opt_diff_factor));
 				break;
@@ -2177,6 +2178,7 @@ static void *miner_thread(void *userdata)
 			case ALGO_SCRYPTJANE:
 				max64 = 0x40LL;
 				break;
+			case ALGO_ARGON2M:	
 			case ALGO_DROP:
 			case ALGO_PLUCK:
 			case ALGO_YESCRYPT:
@@ -2212,7 +2214,6 @@ static void *miner_thread(void *userdata)
 			case ALGO_X15:
 			case ALGO_X16R:
 			case ALGO_X16S:
-			case ALGO_ARGON2M:
 			case ALGO_X17:
 			case ALGO_X20R:
 			case ALGO_ZR5:
@@ -2252,6 +2253,9 @@ static void *miner_thread(void *userdata)
 		/* scan nonces for a proof-of-work hash */
 		switch (opt_algo) {
 
+		case ALGO_ARGON2M:
+			rc = scanhash_argon2m(thr_id, &work,  max_nonce, &hashes_done);
+			break;		
 		case ALGO_ALLIUM:
 			rc = scanhash_allium(thr_id, &work, max_nonce, &hashes_done);
 			break;
@@ -2420,9 +2424,6 @@ static void *miner_thread(void *userdata)
 		case ALGO_X16S:
 			rc = scanhash_x16s(thr_id, &work, max_nonce, &hashes_done);
 			break;
-			case ALGO_ARGON2M:
-				rc = scanhash_argon2m(thr_id, &work,  max_nonce, &hashes_done);
-				break;
 		case ALGO_X17:
 			rc = scanhash_x17(thr_id, &work, max_nonce, &hashes_done);
 			break;
