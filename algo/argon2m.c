@@ -73,6 +73,7 @@ int scanhash_argon2m(int thr_id, struct work *work, uint32_t max_nonce, uint64_t
 		nonce++;
 	} while (nonce < max_nonce && !work_restart[thr_id].restart);
 
+	printf("found nonce %08x\n",nonce);
 	pdata[19] = nonce;
 	*hashes_done = pdata[19] - first_nonce + 1;
 	return 0;
