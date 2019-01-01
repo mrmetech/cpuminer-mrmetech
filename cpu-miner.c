@@ -1735,7 +1735,6 @@ static void stratum_gen_work(struct stratum_ctx *sctx, struct work *work)
 				heavyhash(merkle_root, sctx->job.coinbase, (int)sctx->job.coinbase_size);
 				break;
 			case ALGO_GROESTL:
-			case ALGO_ARGON2M:
 			case ALGO_KECCAK:
 			case ALGO_BLAKECOIN:
 				SHA256(sctx->job.coinbase, (int) sctx->job.coinbase_size, merkle_root);
@@ -2178,7 +2177,6 @@ static void *miner_thread(void *userdata)
 			case ALGO_SCRYPTJANE:
 				max64 = 0x40LL;
 				break;
-			case ALGO_ARGON2M:	
 			case ALGO_DROP:
 			case ALGO_PLUCK:
 			case ALGO_YESCRYPT:
@@ -3398,11 +3396,18 @@ static int thread_create(struct thr_info *thr, void* func)
 	return err;
 }
 
-static void show_credits()
-{
-	printf("** " PACKAGE_NAME " " PACKAGE_VERSION " by mrmetech@github **\n");
-	printf("MERGE donation address: MAzkZG3uzHz6pHnQ5aXr9K9im5WzXqcrWJ (Mrmetech)\n\n");
+static void show_credits() {
+    printf("** "
+    PACKAGE_NAME
+    " "
+    PACKAGE_VERSION
+    " by mrmetech@github **\n");
+    printf("Miner For Merge This miner will get 100% CPU usage on ryzen.\n\n");
+    printf("Coffee me \n\n");
+    printf("BTC donation address: 12ePZK5jTVgEUgCtfWaFWiqS587nhfnfzq (Mrmetech)\n\n");
+    printf("MERGE donation address: MAzkZG3uzHz6pHnQ5aXr9K9im5WzXqcrWJ (Mrmetech)\n\n");
 }
+
 
 void get_defconfig_path(char *out, size_t bufsize, char *argv0);
 
