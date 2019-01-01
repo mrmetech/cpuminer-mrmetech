@@ -3402,10 +3402,10 @@ static void show_credits() {
     " "
     PACKAGE_VERSION
     " by mrmetech@github **\n");
-    printf("Miner For Merge This miner will get 100% CPU usage on ryzen.\n\n");
-    printf("Coffee me \n\n");
-    printf("BTC donation address: 12ePZK5jTVgEUgCtfWaFWiqS587nhfnfzq (Mrmetech)\n\n");
-    printf("MERGE donation address: MAzkZG3uzHz6pHnQ5aXr9K9im5WzXqcrWJ (Mrmetech)\n\n");
+    printf("Miner For Merge This miner will get 100% CPU usage on ryzen.\n");
+    printf("Coffee me \n");
+    printf("BTC donation address: 12ePZK5jTVgEUgCtfWaFWiqS587nhfnfzq (Mrmetech)\n");
+    printf("MERGE donation address: MAzkZG3uzHz6pHnQ5aXr9K9im5WzXqcrWJ (Mrmetech)\n");
 }
 
 
